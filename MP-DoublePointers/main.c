@@ -6,7 +6,7 @@
 
 /* 
  * File:   main.c
- * Author: vijay
+ * Author: Vijay Suthar
  *
  * Created on February 14, 2020, 12:56 PM
  */
@@ -25,7 +25,7 @@ struct grade_node {
 void create_head1(struct grade_node *head);
 struct grade_node *create_head2(struct grade_node *head);
 void create_head3(struct grade_node **head);
-
+void twoDArraysDemo(void);
 
 
 /*
@@ -66,6 +66,9 @@ int main(int argc, char** argv) {
     printf("\n head address in main created with create_head3() : %p", head);
     printf("\n NOTE:  head address in main() worked correctly when passed as a double pointer!!!\n");
  
+    // Now call function to demo doing 2D arrays
+    twoDArraysDemo();
+    
     return (EXIT_SUCCESS);
 }
 
@@ -88,4 +91,48 @@ void create_head3(struct grade_node **head)
     // now we have a pointer to the address of the head
     *head = malloc(sizeof(struct grade_node *));
     printf("\n head created create_head3()- address : %p", *head);
+}
+
+void twoDArraysDemo(void)
+{
+#define numRows   4
+#define maxCols   6
+/*
+ * lets say we want to have to implement a 2D array but the number of columns per row 
+ * is variable.   You could use a 2D with the number of rows and then allocate the max
+ * for the number of columns.
+*/
+   int array2Dstatic[numRows][maxCols];
+/* 
+ * this would be perfectly fine in most cases - however what happens if maxCols
+ * is to large or you can't afford the memory or there are other reasons to keep the 
+ * numCol for each row dynamic.   In this case you could you use an a double pointer
+ * as below.
+*/
+    int **array2Ddynamic;
+       
+    // first get memory to point to the location of numRows rows.  
+    // NOTE:  None of the columns are allocated yet.  
+    array2Ddynamic = malloc(numRows * sizeof(int **));
+    
+    // this will print out what is inside of the location of the rows
+    // initially could be junk - initially is compiler dependent - gcc inits to 0
+    for(int i = 0; i < numRows; ++i) printf("\n %p", array2Ddynamic[i]);
+    
+    // now lets allocate memory for each column.   For this example lets assume we 
+    // need twice as many column as the row index (1-based) i.e. row index 2 would need 6 columns
+    for(int i = 0; i < numRows; ++i) array2Ddynamic[i] = malloc((i+1)*2*sizeof(int *));
+    // print out starting location of each row.   Note the spacing between addresses
+    // spacing is not uniform like normal 2D tables / arrays would be.
+    for(int i = 0; i < numRows; ++i) printf("\n %p", array2Ddynamic[i]);
+    // lets init the value of the columns as the row number
+    for(int i = 0; i < numRows; ++i)
+        for(int j = 0; j < (i+1); ++j) array2Ddynamic[i][j] = i;
+    // now print out each row.
+    printf("\n the 2D table entries now");
+    for(int i = 0; i < numRows; ++i) 
+    {
+        printf("\n");
+        for(int j = 0; j < (i+1); ++j) printf("element %d, %d : %d ", i, j, array2Ddynamic[i][j]);
+    }
 }
